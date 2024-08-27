@@ -18,7 +18,7 @@ class LoginRequest extends FormRequest
             'password' => ['required', 'string', 'min:6'],
         ];
     }
-<<<<<<< HEAD
+
     // give the message to user 
     public function messages()
     {
@@ -29,6 +29,5 @@ class LoginRequest extends FormRequest
             'password.min' => 'Password must be at least 6 characters long',
         ];
     }
-=======
->>>>>>> d4530912313f03b9d3f0d0c2393e76f1544d51cc
+
 }
