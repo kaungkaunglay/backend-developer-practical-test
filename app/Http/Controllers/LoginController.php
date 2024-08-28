@@ -1,42 +1,39 @@
 <?php
 
-namespace App\Http\Controllers;
-
-use App\Http\Requests\LoginRequest;
-use App\Http\Resources\LoginResource;
-use App\Models\User;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use App\Http\Resources\LoginResource;
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\LoginRequest;
 
 class LoginController extends Controller
 {
     public function login(LoginRequest $request)
     {
-        try {
-            $user = User::where('email', $request->validated('email'))->firstOrFail();
+        // 1. The request is already validated by LoginRequest
 
-            if (!Auth::attempt($request->validated())) {
-                throw new AuthenticationException('Invalid credentials');
+        try {
+            // 2. Attempt to authenticate the user using the 'ctj-api' guard
+            $credentials = $request->only('email', 'password');
+            if (!Auth::guard('ctj-api')->attempt($credentials)) {
+                return response()->json([
+                    'status'  => Response::HTTP_UNAUTHORIZED,
+                    'message' => 'Invalid credentials',
+                ], Response::HTTP_UNAUTHORIZED);
             }
 
-            return LoginResource::make($user);
-        } catch (AuthenticationException $e) {
+            // 3. Retrieve the authenticated user
+            $user = Auth::guard('ctj-api')->user();
+
+            // 4. Return the user data using LoginResource
+            return new LoginResource($user);
+        } catch (ValidationException $e) {
             return response()->json([
-                'status'  => Response::HTTP_UNAUTHORIZED,
-                'message' => $e->getMessage(),
-            ], Response::HTTP_UNAUTHORIZED);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'status'  => Response::HTTP_NOT_FOUND,
-                'message' => 'Model not found.',
-            ], Response::HTTP_NOT_FOUND);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'status'  => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'message' => 'Internal server error.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                'status'  => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'message' => $e->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 }
