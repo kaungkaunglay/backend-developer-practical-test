@@ -24,11 +24,11 @@ Route::get('/', function () {
 
 Route::post('api/mpt/invoice-amount', function (Request $request) {
     $controller = new InternetServiceProviderController();
-    return $controller->getInvoiceAmount($request, new Mpt());
+    return $controller->getInvoiceAmount($request, 'Mpt');
 });
 
 Route::post('api/ooredoo/invoice-amount', function (Request $request) {
     $controller = new InternetServiceProviderController();
-    return $controller->getInvoiceAmount($request, new Ooredoo());
+    return $controller->getInvoiceAmount($request, 'Ooredoo');
 });
 
