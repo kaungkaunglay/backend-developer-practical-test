@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InternetServiceProviderController;
 use App\Services\InternetServiceProvider\Mpt;
 use App\Services\InternetServiceProvider\Ooredoo;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\JobController;
 use Illuminate\Http\Request;
 
 /*
@@ -31,4 +33,8 @@ Route::post('api/ooredoo/invoice-amount', function (Request $request) {
     $controller = new InternetServiceProviderController();
     return $controller->getInvoiceAmount($request, 'Ooredoo');
 });
+
+
+Route::get('api/payroll', [StaffController::class, 'payroll']);
+Route::post('api/apply-job', [JobController::class, 'apply']);
 
