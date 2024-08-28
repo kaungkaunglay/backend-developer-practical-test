@@ -40,4 +40,32 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    /**
+     * Define the relationship with the Post model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function posts)
+    {
+        return $this->hasMany(Post::class);
+    }
+      /**
+     * Define the relationship with the Like model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+    /**
+     * Define the relationship with the Tag model through posts.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function tags()
+    {
+        return $this->hasManyThrough(Tag::class, Post::class);
+    }
 }
